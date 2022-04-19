@@ -32,7 +32,7 @@ import pandas as pd
 import mysql.connector
 from mysql.connector import errorcode
 from datetime import date
-import datetime
+from datetime import datetime, timedelta
 
 from selenium.webdriver.common.keys import Keys
 
@@ -186,10 +186,35 @@ class ScriptOLX():
         else:
             db_connection.close();
             print("Close MySQL connection");
+    
+    def retornar_numero_do_mes(self, stringMes):
+
+        if stringMes.lower() == 'jan' or stringMes.lower() == 'janeiro':
+            return '01';
+        if stringMes.lower() == 'fev' or stringMes.lower() == 'fevereiro':
+            return '02';
+        if stringMes.lower() == 'mar' or stringMes.lower() == 'março':
+            return '03';
+        if stringMes.lower() == 'abr' or stringMes.lower() == 'abril':
+            return '04';
+        if stringMes.lower() == 'mai' or stringMes.lower() == 'maio':
+            return '05';
+        if stringMes.lower() == 'jun' or stringMes.lower() == 'junho':
+            return '06';
+        if stringMes.lower() == 'jul' or stringMes.lower() == 'julho':
+            return '07';
+        if stringMes.lower() == 'ago' or stringMes.lower() == 'agosto':
+            return '08';
+        if stringMes.lower() == 'set' or stringMes.lower() == 'setembro':
+            return '09';
+        if stringMes.lower() == 'out' or stringMes.lower() == 'outubro':
+            return '10';
+        if stringMes.lower() == 'nov' or stringMes.lower() == 'novembro':
+            return '11';
+        if stringMes.lower() == 'dez' or stringMes.lower() == 'dezembro':
+            return '12';
 
     def test_chama_categoria_para_sua_casa_olx(self):
-        db_connection = mysql.connector.connect(host="localhost", user="root", passwd="root", database="OLXOLAPSIAD");
-        cursor = db_connection.cursor();
 
         driver.maximize_window();#maximizando a janela do Chrome
         url = 'https://al.olx.com.br/alagoas/maceio/para-a-sua-casa';
@@ -200,18 +225,27 @@ class ScriptOLX():
         itensCasa=[];
         # endereco = [];
 
-        i = 54;
+        i = 0;
         #for i in range(54):
-        for i in range(51):
+        for i in range(6):
              try:
                 sXPath = '//*[@id="ad-list"]/li[' + str(i+1) +  ']';
+                sXURL = '//*[@id="ad-list"]/li[' + str(i+1) +  ']/div/a';
                 sxPathEndereco = '//*[@id="ad-list"]/li['+str(i+1)+']/div/a/div/div[2]/div[2]/div[2]/div[1]/div/div[1]';
 
                 #sXPath= "/html/body/div[2]/div[2]/div[2]/div/div[2]/div[2]/div/div[7]/div/div/div/div[10]/div/div/div/ul/li[" + str(i+1) + "]";
 
                 # endereco.append(driver.find_element(By.XPATH, sxPathEndereco));
+                #itensCasa.append(driver.find_element(By.XPATH, sXURL));
                 itensCasa.append(driver.find_element(By.XPATH, sxPathEndereco));
                 itensCasa.append(driver.find_element(By.XPATH,sXPath));
+
+                """
+                print("\links: ");
+                links = driver.find_elements_by_partial_link_text(By.XPATH, sXURL);
+                for link in links:
+                    print(link.get_attribute('href'));
+                """
 
                 if itensCasa[i] and itensCasa[i].text:
                     arrayItensCasa.append(itensCasa[i].text.splitlines());
@@ -223,6 +257,7 @@ class ScriptOLX():
                  print("\n");
                 # print("itensCasa[i].text:", itensCasa[i].text);
                  print("arrayItensCasa[i]: ", arrayItensCasa[i]);
+                 print("\n\n");
 
                  descricao = None;
                  diaInserido = None;
@@ -231,21 +266,35 @@ class ScriptOLX():
                  ano = None;
                  hora = None;
                  nome_anunciante = None;
+                 tipo_anunciante = None;
                  quantidade_parcela = None;
+                 contato_anunciante= None;
+                 ano_produto=None;
                  date_time_obj=None;
+                 bairro= None;
+                 estado='Alagoas';
+                 cidade=None;
+
+                 nome = None;
+                 preco = None;
+                 marca = None;
 
                  horaInserida = arrayItensCasa[i][len(arrayItensCasa[i])-1];
+                 bairro = arrayItensCasa[i][len(arrayItensCasa[i])-2].replace(",", "");
+
+                 nome = arrayItensCasa[i][0];
+                 preco = arrayItensCasa[i][1];
+                 
+                 cidade = bairro.split()[0];
+                 bairro = bairro.split()[1];
+
                  horaInserida2 = horaInserida.split(" ");
                  hora = horaInserida2[len(horaInserida2)-1];
 
-                 print("horaInserida2: ", horaInserida2);
-                 print("hora: ", hora);
-
-                 diaInserido = horaInserida2[0].replace(",", "");
+                 if horaInserida2 and horaInserida2[0]:
+                    diaInserido = horaInserida2[0].replace(",", "");
                  #splitHora = hora.split(':');
 
-                 print("diaInserido: ", diaInserido);
-                 
                  """
                  if not (':'in hora):
                     print('aqui');
@@ -259,45 +308,75 @@ class ScriptOLX():
 
                     if diaInserido.lower() == 'hoje':
                         data = str(current_date.strftime('%Y-%m-%d')) + ' '+str(hora);
-                        date_time_obj = datetime.datetime.strptime(data, '%Y-%m-%d %H:%M')
+                        date_time_obj = datetime.strptime(data, '%Y-%m-%d %H:%M')
                         dia = str(current_date.strftime('%d'));
                         mes=str(current_date.strftime('%m'));
                         ano= str(current_date.strftime('%Y'));
+                    elif diaInserido.lower() == 'ontem':
+                        print("oi: ");
+                        dataOntem = datetime.now() - timedelta(1);
+                        print("dataOntem: ", dataOntem);
+                        data = str(dataOntem.strftime('%Y-%m-%d')) + ' '+str(hora);
+                        date_time_obj = datetime.strptime(data, '%Y-%m-%d %H:%M');
+                        dia = str(dataOntem.strftime('%d'));
+                        mes=str(dataOntem.strftime('%m'));
+                        ano= str(dataOntem.strftime('%Y'));
                     else:
-                        # //pegar o dia e converter pra numero abr ==04 e etc
-                        data = str(diaInserido) + ' '+str(hora);
+                        splitDiaInserido = diaInserido.split();
+                        print("elseeee>>>splitDiaInserido.text\n\n", splitDiaInserido);
+                        
+                        print("\n\nsplitDiaInserido: ", splitDiaInserido);
+                        getDiaInserido = splitDiaInserido[0];
+                        print("\n\getDiaInserido: ", getDiaInserido);
+                        getMesInserido = splitDiaInserido[1];
+                        print("\n\getMesInserido: ", getMesInserido);
+                        getNumeroMesInserido = self.retornar_numero_do_mes(getMesInserido);
+                        
+                        data = str(current_date.strftime('%Y'))+'-'+str(getNumeroMesInserido)+'-'+str(getDiaInserido) +' '+str(hora);
+                        date_time_obj = datetime.datetime.strptime(data, '%Y-%m-%d %H:%M');
+                        
                         print("não é hoje - data: ", data);
-                        dia = data.split('/')[0];
+
+                        dia = data.split('-')[2];
                         print("dia: ", dia);
-                        mes=data.split('/')[1];
+                        mes=data.split('-')[1];
                         print("mes: ", mes);
-                        ano=data.split('/')[2];
+                        ano=data.split('-')[0];
                         print("ano: ", ano);
 
-                print("descricao: ", descricao);
                 # print("dia: ", dia);
                 # print("mes: ", mes);
                 # print("ano: ", ano);
+                if ano != None:
+                    ano = int(ano);
+
                 if date_time_obj != None:
+                    print('\n');
                     print('Date:', date_time_obj.date());
                     print('Time:', date_time_obj.time());
                     print('Date-time:', date_time_obj);
+                try:
+                    db_connection = mysql.connector.connect(host="localhost", user="root", passwd="root", database="OLXOLAPSIAD");
+                    cursor = db_connection.cursor();
+                    print("INSERT INTO >>antes");
 
-                """
-                marca = None;
-                nome = arrayItensCasa[i][0];
-                preco = arrayItensCasa[i][1];
+                    sql = "INSERT INTO produtoolx (id, nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, data, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %s,  %d, %d, %s, %d, %d, %s, %s, %s, %s, %s, %s)";
+                    values = ((i+1), nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, date_time_obj, estado, cidade, bairro);
+                    cursor.execute(sql, values);
+                    db_connection.commit();
 
-                nome_anunciante = None;
-                quantidade_parcela = None;
-                tipo = arrayItensCasa[i][2];
+                    print("INSERT INTO >>depois");
 
-                
-                sql = "INSERT INTO produtoolx (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %s, %d, %s, %d, %d, %s, %s, %s, %s, %s, %s)";
-                values = ("AL", "Maceió");
-                cursor.execute(sql, values);
-                db_connection.commit();
-                """
+                except mysql.connector.Error as error:
+                    if error.errno == errorcode.ER_BAD_DB_ERROR:
+                        print("Database doesn't exist")
+                    elif error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                        print("User name or password is wrong")
+                    else:
+                        print(error);
+                else:
+                    db_connection.close();
+                    print("Close MySQL connection");
 
              except:
                 print("Ocorreu um erro ao tentar imprimir o item de casa no OLX. Contate a administração.");
@@ -309,6 +388,7 @@ if __name__ == "__main__": #condição do python para executar diretamente esse 
     """
     test_olx.test_cria_banco_de_dados_OLXOLAPSIAD();
     test_olx.test_cria_tabelas_dimensoes_DW();
+  
     test_olx.test_cria_tabela_varredura_produtoolx();
     """
 
