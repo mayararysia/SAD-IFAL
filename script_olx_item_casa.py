@@ -227,7 +227,7 @@ class ScriptOLX():
 
         i = 0;
         #for i in range(54):
-        for i in range(6):
+        for i in range(54):
              try:
                 sXPath = '//*[@id="ad-list"]/li[' + str(i+1) +  ']';
                 sXURL = '//*[@id="ad-list"]/li[' + str(i+1) +  ']/div/a';
@@ -250,16 +250,23 @@ class ScriptOLX():
                 if itensCasa[i] and itensCasa[i].text:
                     arrayItensCasa.append(itensCasa[i].text.splitlines());
 
+                
                 print("\nindex: ", i);
-               
+                
+                print("print: ", itensCasa[i].text);
+                
+                if itensCasa[i] and itensCasa[i].text and arrayItensCasa[i] and len(arrayItensCasa[i]) == 5:
+                 print("\n");
+                 print(itensCasa[i].text);
+                 print("\n\n");
+                
                 #if itensCasa[i] and itensCasa[i].text:
-                if itensCasa[i] and itensCasa[i].text and arrayItensCasa[i]:
+                if itensCasa[i] and itensCasa[i].text and arrayItensCasa[i] and len(arrayItensCasa[i]) == 5:
                  print("\n");
                 # print("itensCasa[i].text:", itensCasa[i].text);
                  print("arrayItensCasa[i]: ", arrayItensCasa[i]);
                  print("\n\n");
-
-                 descricao = None;
+                 
                  diaInserido = None;
                  dia = None;
                  mes = None;
@@ -293,7 +300,6 @@ class ScriptOLX():
 
                  if horaInserida2 and horaInserida2[0]:
                     diaInserido = horaInserida2[0].replace(",", "");
-                 #splitHora = hora.split(':');
 
                  """
                  if not (':'in hora):
@@ -313,7 +319,6 @@ class ScriptOLX():
                         mes=str(current_date.strftime('%m'));
                         ano= str(current_date.strftime('%Y'));
                     elif diaInserido.lower() == 'ontem':
-                        print("oi: ");
                         dataOntem = datetime.now() - timedelta(1);
                         print("dataOntem: ", dataOntem);
                         data = str(dataOntem.strftime('%Y-%m-%d')) + ' '+str(hora);
@@ -323,7 +328,6 @@ class ScriptOLX():
                         ano= str(dataOntem.strftime('%Y'));
                     else:
                         splitDiaInserido = diaInserido.split();
-                        print("elseeee>>>splitDiaInserido.text\n\n", splitDiaInserido);
                         
                         print("\n\nsplitDiaInserido: ", splitDiaInserido);
                         getDiaInserido = splitDiaInserido[0];
@@ -338,11 +342,8 @@ class ScriptOLX():
                         print("não é hoje - data: ", data);
 
                         dia = data.split('-')[2];
-                        print("dia: ", dia);
                         mes=data.split('-')[1];
-                        print("mes: ", mes);
                         ano=data.split('-')[0];
-                        print("ano: ", ano);
 
                 # print("dia: ", dia);
                 # print("mes: ", mes);
@@ -358,11 +359,9 @@ class ScriptOLX():
                 try:
                     db_connection = mysql.connector.connect(host="localhost", user="root", passwd="root", database="OLXOLAPSIAD");
                     cursor = db_connection.cursor();
-                    print("INSERT INTO >>antes");
 
-                    sql = "INSERT INTO produtoolx (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, data, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %d, %d, %s, %d, %d, %s, %s, %s, %s, %s, %s)";
+                    sql = "INSERT INTO produtoolx (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, data, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)";
                     
-                    print('sql: ', sql);
                     values = (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, date_time_obj, estado, cidade, bairro);
                     cursor.execute(sql, values);
                     db_connection.commit();
