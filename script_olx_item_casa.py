@@ -360,8 +360,10 @@ class ScriptOLX():
                     cursor = db_connection.cursor();
                     print("INSERT INTO >>antes");
 
-                    sql = "INSERT INTO produtoolx (id, nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, data, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %s,  %d, %d, %s, %d, %d, %s, %s, %s, %s, %s, %s)";
-                    values = ((i+1), nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, date_time_obj, estado, cidade, bairro);
+                    sql = "INSERT INTO produtoolx (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, data, estado, cidade, bairro) VALUES (%s, %s, %s, %s, %s, %d, %d, %s, %d, %d, %s, %s, %s, %s, %s, %s)";
+                    
+                    print('sql: ', sql);
+                    values = (nome_anunciante, tipo_anunciante, contato_anunciante, marca, nome, ano_produto, preco, quantidade_parcela, ano, mes, dia, hora, date_time_obj, estado, cidade, bairro);
                     cursor.execute(sql, values);
                     db_connection.commit();
 

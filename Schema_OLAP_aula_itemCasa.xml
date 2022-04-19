@@ -1,0 +1,60 @@
+<Schema name="New Schema1">
+  <Cube name="dw_olap_aula" visible="true" cache="true" enabled="true">
+    <Table name="dm_fato">
+    </Table>
+    <Dimension type="StandardDimension" visible="true" foreignKey="id_local" highCardinality="false" name="Dimensao_local">
+      <Hierarchy name="Local" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dm_local">
+        </Table>
+        <Level name="Estado" visible="true" table="dm_local" column="estado" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Cidade" visible="true" table="dm_local" column="cidade" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Bairro" visible="true" table="dm_local" column="bairro" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="id_tempo" highCardinality="false" name="Dimensao_tempo">
+      <Hierarchy name="Tempo" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dm_tempo">
+        </Table>
+        <Level name="Ano" visible="true" table="dm_tempo" column="ano" type="Integer" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Mes" visible="true" table="dm_tempo" column="mes" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Dia" visible="true" table="dm_tempo" column="dia" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Hora" visible="true" table="dm_tempo" column="hora" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="id_itemCasa" highCardinality="false" name="Dimensao_item_casa">
+      <Hierarchy name="ItemCasa" visible="true" hasAll="false">
+        <Table name="dm_itemcasa">
+        </Table>
+        <Level name="Marca" visible="true" table="dm_itemcasa" column="marca" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nome" visible="true" table="dm_itemcasa" column="nome" nameColumn="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Ano" visible="true" table="dm_itemcasa" column="ano" type="Integer" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Descricao" visible="true" table="dm_itemcasa" column="descricao" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="id_anunciante" highCardinality="false" name="Anunciante">
+      <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dm_anunciante">
+        </Table>
+        <Level name="Nome" visible="true" table="dm_anunciante" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Tipo" visible="true" table="dm_anunciante" column="tipo" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Preco" column="preco" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="quantidade_parcela" column="quantidade_parcela" aggregator="sum" visible="true">
+    </Measure>
+  </Cube>
+</Schema>
